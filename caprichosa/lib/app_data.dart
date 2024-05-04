@@ -36,13 +36,13 @@ class AppData with ChangeNotifier {
     DateTime now = DateTime(2004,1,8);
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     Collection collectionBase = Collection("Revolution Case", formattedDate, elements, null);
-    collections = [collectionBase];
+    collections.add(collectionBase);
   }
 
   // Initialize collections
   void initializeCollections() {
-    if (!defaultCollectionDeleted) {
-      addDefaultCollection(); // Add default collection only if not deleted
+  if (collections.isEmpty && !defaultCollectionDeleted) {
+      addDefaultCollection(); // Add default collection only if collections list is empty and default collection is not deleted
     }
   }
 
@@ -63,6 +63,21 @@ class AppData with ChangeNotifier {
 
   void setSelectedCollection(Collection collection) {
     selectedCollection = collection;
+    print("selectedasdsad");
+    notifyListeners();
+  }
+
+  void addCollection(Collection collection) {
+    String newName = collection.name;
+    int count = 1;
+
+    while (collections.any((existingCollection) => existingCollection.name == newName)) {
+      newName = '${collection.name} (${count++})'; 
+    }
+
+    collection.name = newName; 
+    collections.add(collection); 
+    notifyListeners();
   }
 
 }

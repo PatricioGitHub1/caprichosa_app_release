@@ -1,4 +1,6 @@
 import 'package:caprichosa/app_data.dart';
+import 'package:caprichosa/collection.dart';
+import 'package:caprichosa/collection_edit.dart';
 import 'package:caprichosa/left_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  late AppData appData;
-  TextEditingController textEditingController = TextEditingController();
+  final TextEditingController _collectionNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +54,14 @@ class _MainWidgetState extends State<MainWidget> {
               child: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  print('Added collection');
+                  showAddCollectionDialog(appData);
                 },
                 child: const Icon(CupertinoIcons.add_circled_solid),
               ),
             ),
           ],
         ),
-        backgroundColor: CupertinoColors.darkBackgroundGray,
-        border: null,
+
       ),
       child: Row(
         children: [
@@ -86,7 +86,7 @@ class _MainWidgetState extends State<MainWidget> {
                           flex: 4,
                           child: Container(
                             color: CupertinoColors.activeGreen,
-                            // Your content for the first container here
+                            child: CollectionEdit(collection: appData.selectedCollection),
                           ),
                         ),
                         Expanded(
@@ -103,7 +103,41 @@ class _MainWidgetState extends State<MainWidget> {
         ],
       ),
     );
-
+    
   }
 
+  showAddCollectionDialog(AppData appData) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Enter Collection Name'),
+        content: CupertinoTextField(
+          controller: _collectionNameController,
+          placeholder: 'Collection Name',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              String collectionName = _collectionNameController.text;
+
+              if (collectionName.isNotEmpty) {
+                Collection collection = Collection.basic(collectionName);
+                appData.addCollection(collection);
+              }
+              
+              Navigator.pop(context); 
+            },
+            child: const Text('Save'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            isDestructiveAction: true,
+            child: const Text('Dismiss'),
+          ),
+        ],
+      ),
+    );
+  }
 }
