@@ -1,5 +1,6 @@
 import 'package:caprichosa/app_data.dart';
 import 'package:caprichosa/collection.dart';
+import 'package:caprichosa/collection_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -85,12 +86,124 @@ class _CollectionEditState extends State<CollectionEdit> {
           ),
         ),
         Expanded(
-          flex: 6, // 60% of the available height
-          child: Container(
-            color: CupertinoColors.secondarySystemFill,
-            width: double.infinity,
+        flex: 6, // 60% of the available height
+        child: Container(
+          color: Color.fromARGB(237, 15, 15, 221),
+          width: double.infinity,
+          child: Stack(
+            children: [
+              // Content to show when the boolean is true
+              if (appData.selectedElement != null)
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Your tag widget
+                    SizedBox(
+                      height: 50, // Adjust height as needed
+                      child: Container(
+                        color: Colors.green, // Adjust color as needed
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust padding as needed
+                                  child: Text(
+                                    appData.selectedElement!.name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Tooltip(
+                              message: 'Add element',
+                              child: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
+
+                                  // Delay the scrolling animation slightly to allow time for layout update
+                                  Future.delayed(const Duration(milliseconds: 2000), () {
+                                    _scrollController.animateTo(
+                                      _scrollController.position.maxScrollExtent,
+                                      duration: const Duration(milliseconds: 500),
+                                      curve: Curves.easeOut,
+                                    );
+                                  });
+
+                                },
+                                child: const Icon(CupertinoIcons.add_circled_solid),
+                              ),
+                            ),
+                            SizedBox(width: 8), // Add some space between buttons
+                            Tooltip(
+                              message: 'Save element',
+                              child: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  print('elemento guardado!!');
+                                },
+                                child: const Icon(CupertinoIcons.floppy_disk),
+                              ),
+                            ),
+                          ],
+                        )
+                      ),
+                    ),
+                    SizedBox(height: 20), // Spacer
+                    // Your text field with placeholder text
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: CupertinoTextField()
+                    ),
+                  ],
+                ),
+              // Content to show when the boolean is false
+              if (appData.selectedElement == null)
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // Center the children horizontally
+                    children: [
+                      const Text(
+                        'Select or create an item',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Tooltip(
+                        message: 'Add Element',
+                        child: CupertinoButton(       
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
+                            appData.addCollectionElement(newElement);
+                            // Delay the scrolling animation slightly to allow time for layout update
+                            Future.delayed(const Duration(milliseconds: 2000), () {
+                              _scrollController.animateTo(
+                                _scrollController.position.maxScrollExtent,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeOut,
+                              );
+                            });
+                          },
+                          child: const Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemRed,),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ),
+      ),
+
         Expanded(
           flex: 4, // 40% of the available height
           child: CupertinoScrollbar(
@@ -133,13 +246,23 @@ class _CollectionEditState extends State<CollectionEdit> {
                                   color: CupertinoColors.activeBlue,
                                 ),
                               ),
-                              Text(
-                                "${appData.selectedCollection!.elements[index].percentage} %",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: CupertinoColors.systemGrey,
-                                ),
-                              ),
+                              Row(children: [
+                                  Container(
+                                    width: 10, // Adjust width of the colored rectangle as needed
+                                    height: 10, // Adjust height of the colored rectangle as needed
+                                    color: appData.selectedCollection!.elements[index].color ?? Colors.transparent,
+                                  ),
+                                  const Padding(padding: EdgeInsets.only(left: 10, right:5)),
+                                  Text(
+                                    "${appData.selectedCollection!.elements[index].percentage} %",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: CupertinoColors.systemGrey,
+                                    ),
+                                  ),
+                                ]
+                              ,)
+                              
                             ],
                           ),
                         ),
@@ -148,7 +271,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                         onPressed: () {
                           // Handle delete button tap action here
                           print("delete element!!!!");
-                          
+                          appData.closeCollectionElement(appData.selectedCollection!.elements[index]);
                         },
                         child: const Icon(
                           CupertinoIcons.clear,
@@ -166,9 +289,9 @@ class _CollectionEditState extends State<CollectionEdit> {
         ),
       ],
     );
-
+    
   }
-
+  
   @override
   void dispose() {
     _textFieldController.dispose();

@@ -65,6 +65,17 @@ class AppData with ChangeNotifier {
     }
   }
 
+  void closeCollectionElement(CollectionElement element) {
+    if (element == selectedElement) {
+      print("el elemento a eliminar esta seleccionado");
+      selectedElement = null;
+    }
+
+    selectedCollection!.elements.remove(element);
+
+    notifyListeners();
+  }
+
   void setSelectedCollection(Collection collection) {
     selectedCollection = collection;
     notifyListeners();
@@ -96,6 +107,19 @@ class AppData with ChangeNotifier {
     collection.name = newName; 
     collections.add(collection); 
     notifyListeners();
+  }
+
+  void addCollectionElement(CollectionElement element) {
+    String newName = element.name;
+    int count = 1;
+
+    while (selectedCollection!.elements.any((existingElement) => existingElement.name == newName)) {
+      newName = '${element.name} (${count++})'; 
+    }
+
+    element.name = newName;
+    selectedCollection!.elements.add(element);
+    notifyListeners(); 
   }
 
 }
