@@ -5,7 +5,7 @@ class Collection {
   String name;
   String? lastModificationDate;
   String? filePath;
-  List<CollectionElement>? elements;
+  List<CollectionElement> elements = [];
 
   Collection(this.name, this.lastModificationDate, this.elements, this.filePath);
   Collection.basic(this.name);
