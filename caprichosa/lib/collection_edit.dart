@@ -16,11 +16,13 @@ class CollectionEdit extends StatefulWidget {
 
 class _CollectionEditState extends State<CollectionEdit> {
   late TextEditingController _textFieldController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _textFieldController = TextEditingController(text: widget.collection?.name ?? '');
+     _scrollController = ScrollController();
   }
 
   @override
@@ -34,8 +36,6 @@ class _CollectionEditState extends State<CollectionEdit> {
   @override
   Widget build(BuildContext context) {
     AppData appData = Provider.of<AppData>(context);
-    ScrollController _scrollController = ScrollController();
-
 
     if (widget.collection == null) {
       print("xd");
@@ -126,9 +126,9 @@ class _CollectionEditState extends State<CollectionEdit> {
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
                                   CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
-
+                                  appData.addCollectionElement(newElement);
                                   // Delay the scrolling animation slightly to allow time for layout update
-                                  Future.delayed(const Duration(milliseconds: 2000), () {
+                                  Future.delayed(const Duration(milliseconds: 500), () {
                                     _scrollController.animateTo(
                                       _scrollController.position.maxScrollExtent,
                                       duration: const Duration(milliseconds: 500),
@@ -185,7 +185,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                             CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
                             appData.addCollectionElement(newElement);
                             // Delay the scrolling animation slightly to allow time for layout update
-                            Future.delayed(const Duration(milliseconds: 2000), () {
+                            Future.delayed(const Duration(milliseconds: 500), () {
                               _scrollController.animateTo(
                                 _scrollController.position.maxScrollExtent,
                                 duration: const Duration(milliseconds: 500),
@@ -295,6 +295,7 @@ class _CollectionEditState extends State<CollectionEdit> {
   @override
   void dispose() {
     _textFieldController.dispose();
+    _scrollController.dispose(); // Dispose scroll controller
     super.dispose();
   }
 }
