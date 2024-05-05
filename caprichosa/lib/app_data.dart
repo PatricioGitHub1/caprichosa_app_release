@@ -77,6 +77,7 @@ class AppData with ChangeNotifier {
 
   void setSelectedCollection(Collection collection) {
     selectedCollection = collection;
+    selectedElement = null;
     notifyListeners();
   }
 

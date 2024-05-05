@@ -237,32 +237,34 @@ class _CollectionEditState extends State<CollectionEdit> {
                           ),
                         ],
                       ),
-                      Expanded(
-                 child:  Positioned.fill(
-                        child: Center(
-                          child: appData.selectedElement?.imageBase64 != null
-                              ? FractionallySizedBox(
-                                  widthFactor: 1.0,
-                                  heightFactor: 1.0,
-                                  child: Image.memory(
-                                    base64.decode(appData.selectedElement!.imageBase64!),
-                                    fit: BoxFit.contain,
-                                  ),
-                                )
-                              : Center(
-                                  child: Text(
-                                    'No image selected',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                        ),
+                      Expanded( // Make this container occupy the remaining space
+                child: Container(
+                  // Add color or decoration as needed
+                  child: Center(
+                    child: appData.selectedElement?.imageBase64 != null
+                      ? FractionallySizedBox(
+                          widthFactor: 1.0,
+                          heightFactor: 1.0,
+                          child: Image.memory(
+                            base64.decode(appData.selectedElement!.imageBase64!),
+                            fit: BoxFit.contain,
                           ),
-                 
-               ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No image selected',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                  ),
+                ),
+              ),
+
+                      
                       
                     ],
                   ),
@@ -310,9 +312,9 @@ class _CollectionEditState extends State<CollectionEdit> {
         Expanded(
           flex: 4, // 40% of the available height
           child: CupertinoScrollbar(
-        controller: _scrollController,
-        child: Container( // Added container with secondarySystemFill color
-          //color: CupertinoColors.secondarySystemFill,
+          controller: _scrollController,
+          child: Container( // Added container with secondarySystemFill color
+            //color: CupertinoColors.secondarySystemFill,
           child: ListView.builder(
             controller: _scrollController,
             itemCount: appData.selectedCollection?.elements.length,
