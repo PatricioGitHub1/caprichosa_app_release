@@ -1,8 +1,17 @@
+import 'dart:convert';
+
 import 'package:caprichosa/app_data.dart';
 import 'package:caprichosa/collection.dart';
 import 'package:caprichosa/collection_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_button.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_button_color.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_dialog_popover.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_dialog_popover_arrowed.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_dialogs_manager.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_field_numeric_slider.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_picker_color.dart';
 import 'package:provider/provider.dart';
 
 class CollectionEdit extends StatefulWidget {
@@ -16,12 +25,19 @@ class CollectionEdit extends StatefulWidget {
 
 class _CollectionEditState extends State<CollectionEdit> {
   late TextEditingController _textFieldController;
+  late TextEditingController _textFieldControllerElementName;
+  final GlobalKey<CDKDialogPopoverState> _anchorColorButton = GlobalKey();
+  final ValueNotifier<Color> _valueColorNotifier =
+      ValueNotifier(Color.fromARGB(0, 255, 255, 255));
   late ScrollController _scrollController;
+  late Widget _preloadedColorPicker;
+  late AppData appData;
 
   @override
   void initState() {
     super.initState();
     _textFieldController = TextEditingController(text: widget.collection?.name ?? '');
+    _textFieldControllerElementName = TextEditingController();
      _scrollController = ScrollController();
   }
 
@@ -35,7 +51,8 @@ class _CollectionEditState extends State<CollectionEdit> {
 
   @override
   Widget build(BuildContext context) {
-    AppData appData = Provider.of<AppData>(context);
+    appData = Provider.of<AppData>(context);
+    _preloadedColorPicker = _buildPreloadedColorPicker();
 
     if (widget.collection == null) {
       print("xd");
@@ -51,7 +68,7 @@ class _CollectionEditState extends State<CollectionEdit> {
         SizedBox(
           height: 150, // You can adjust the height as needed
           child: Container(
-            color: CupertinoColors.activeOrange,
+            //color: CupertinoColors.activeOrange,
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,122 +103,208 @@ class _CollectionEditState extends State<CollectionEdit> {
           ),
         ),
         Expanded(
-        flex: 6, // 60% of the available height
-        child: Container(
-          color: Color.fromARGB(237, 15, 15, 221),
-          width: double.infinity,
-          child: Stack(
-            children: [
-              // Content to show when the boolean is true
-              if (appData.selectedElement != null)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Your tag widget
-                    SizedBox(
-                      height: 50, // Adjust height as needed
-                      child: Container(
-                        color: Colors.green, // Adjust color as needed
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust padding as needed
-                                  child: Text(
-                                    appData.selectedElement!.name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+          flex: 6, // 60% of the available height
+          child: Container(
+            width: double.infinity,
+            child: Stack(
+              children: [
+                // Content to show when the boolean is true
+                if (appData.selectedElement != null)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Your tag widget
+                      SizedBox(
+                        height: 50, // Adjust height as needed
+                        child: Container(
+                          //color: Colors.green, // Adjust color as needed
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust padding as needed
+                                    child: Text(
+                                      appData.selectedElement!.name,
+                                      style: const TextStyle(
+                                        color: CupertinoColors.activeBlue,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
-                            ),
-                            Tooltip(
-                              message: 'Add element',
-                              child: CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
-                                  appData.addCollectionElement(newElement);
-                                  // Delay the scrolling animation slightly to allow time for layout update
-                                  Future.delayed(const Duration(milliseconds: 500), () {
-                                    _scrollController.animateTo(
-                                      _scrollController.position.maxScrollExtent,
-                                      duration: const Duration(milliseconds: 500),
-                                      curve: Curves.easeOut,
-                                    );
-                                  });
+                              Tooltip(
+                                message: 'Add element',
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
+                                    appData.addCollectionElement(newElement);
+                                    // Delay the scrolling animation slightly to allow time for layout update
+                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                      _scrollController.animateTo(
+                                        _scrollController.position.maxScrollExtent,
+                                        duration: const Duration(milliseconds: 500),
+                                        curve: Curves.easeOut,
+                                      );
+                                    });
 
-                                },
-                                child: const Icon(CupertinoIcons.add_circled_solid),
+                                  },
+                                  child: const Icon(CupertinoIcons.add_circled_solid),
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 8), // Add some space between buttons
-                            Tooltip(
-                              message: 'Save element',
-                              child: CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  print('elemento guardado!!');
-                                },
-                                child: const Icon(CupertinoIcons.floppy_disk),
+                              SizedBox(width: 8), // Add some space between buttons
+                              Tooltip(
+                                message: 'Save element',
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    print('elemento guardado!!');
+                                  },
+                                  child: const Icon(CupertinoIcons.floppy_disk),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          )
+                        ),
+                      ),
+                      const SizedBox(height: 20), // Spacer
+                      // Your text field with placeholder text
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: CupertinoTextField(
+                          controller: _textFieldControllerElementName,
                         )
                       ),
-                    ),
-                    SizedBox(height: 20), // Spacer
-                    // Your text field with placeholder text
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: CupertinoTextField()
-                    ),
-                  ],
-                ),
-              // Content to show when the boolean is false
-              if (appData.selectedElement == null)
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // Center the children horizontally
-                    children: [
-                      const Text(
-                        'Select or create an item',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: SizedBox(
+                                width: 150,
+                                child: CDKFieldNumericSlider(
+                                  value: appData.selectedElement!.percentage,
+                                  min: 0,
+                                  max: 100,
+                                  increment: 0.01,
+                                  decimals: 2,
+                                  units: "%",
+                                  onValueChanged: (double value) {
+                                    setState(() {
+                                      appData.setCollectionElementPercentage(appData.selectedElement!, value);
+                                    });
+                                  },
+                                ))
+                            ),
+                          ),
+                          
+                          Expanded(
+                            child: Center(
+                              child: SizedBox(
+                                  width: 150,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ValueListenableBuilder<Color>(
+                                      
+                                        valueListenable: _valueColorNotifier,
+                                        builder: (context, value, child) {
+                                          return CDKButtonColor(
+                                              key: _anchorColorButton,
+                                              color: appData.selectedElement!.color,
+                                              onPressed: () {
+                                                _showPopoverColor(context, _anchorColorButton);
+                                              });
+                                        })),
+                                 ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: CDKButton(
+                                  style: CDKButtonStyle.action,
+                                  isLarge: true,
+                                  onPressed: () {},
+                                  child: const Text('Upload image'),
+                                )),
+                            ),
+                          ),
+                        ],
                       ),
-                      Tooltip(
-                        message: 'Add Element',
-                        child: CupertinoButton(       
-                          padding: EdgeInsets.zero,
-                          onPressed: () {
-                            CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
-                            appData.addCollectionElement(newElement);
-                            // Delay the scrolling animation slightly to allow time for layout update
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              _scrollController.animateTo(
-                                _scrollController.position.maxScrollExtent,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeOut,
-                              );
-                            });
-                          },
-                          child: const Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemRed,),
+                      Expanded(
+                 child:  Positioned.fill(
+                        child: Center(
+                          child: appData.selectedElement?.imageBase64 != null
+                              ? FractionallySizedBox(
+                                  widthFactor: 1.0,
+                                  heightFactor: 1.0,
+                                  child: Image.memory(
+                                    base64.decode(appData.selectedElement!.imageBase64!),
+                                    fit: BoxFit.contain,
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    'No image selected',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                         ),
-                      ),
+                          ),
+                 
+               ),
+                      
                     ],
                   ),
-                ),
-            ],
+                // Content to show when the boolean is false
+                if (appData.selectedElement == null)
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center, // Center the children horizontally
+                      children: [
+                        const Text(
+                          'Select or create an item',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Tooltip(
+                          message: 'Add Element',
+                          child: CupertinoButton(       
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              CollectionElement newElement = CollectionElement('Element', null, 0.0, appData.generateRandomColor());
+                              appData.addCollectionElement(newElement);
+                              // Delay the scrolling animation slightly to allow time for layout update
+                              Future.delayed(const Duration(milliseconds: 500), () {
+                                _scrollController.animateTo(
+                                  _scrollController.position.maxScrollExtent,
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeOut,
+                                );
+                              });
+                            },
+                            child: const Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemRed,),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
       ),
 
         Expanded(
@@ -209,7 +312,7 @@ class _CollectionEditState extends State<CollectionEdit> {
           child: CupertinoScrollbar(
         controller: _scrollController,
         child: Container( // Added container with secondarySystemFill color
-          color: CupertinoColors.secondarySystemFill,
+          //color: CupertinoColors.secondarySystemFill,
           child: ListView.builder(
             controller: _scrollController,
             itemCount: appData.selectedCollection?.elements.length,
@@ -297,5 +400,43 @@ class _CollectionEditState extends State<CollectionEdit> {
     _textFieldController.dispose();
     _scrollController.dispose(); // Dispose scroll controller
     super.dispose();
+  }
+
+  _showPopoverColor(BuildContext context, GlobalKey anchorKey) {
+    final GlobalKey<CDKDialogPopoverArrowedState> key = GlobalKey();
+    if (anchorKey.currentContext == null) {
+      // ignore: avoid_print
+      print("Error: anchorKey not assigned to a widget");
+      return;
+    }
+    CDKDialogsManager.showPopoverArrowed(
+      key: key,
+      context: context,
+      anchorKey: anchorKey,
+      isAnimated: true,
+      isTranslucent: false,
+      onHide: () {
+        // ignore: avoid_print
+        print("hide slider $key");
+      },
+      child: _preloadedColorPicker,
+    );
+  }
+
+  Widget _buildPreloadedColorPicker() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ValueListenableBuilder<Color>(
+        valueListenable: _valueColorNotifier,
+        builder: (context, value, child) {
+          return CDKPickerColor(
+            color: value,
+            onChanged: (color) {
+              appData.setCollectionElementColor(appData.selectedElement!, color);
+            },
+          );
+        },
+      ),
+    );
   }
 }

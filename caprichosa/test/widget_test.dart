@@ -5,7 +5,9 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:caprichosa/main_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:caprichosa/main.dart';
@@ -13,11 +15,12 @@ import 'package:caprichosa/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp(
-        defaultAppearance: "light", // system, light, dark
+    await tester.pumpWidget(const CDKApp(
+        defaultAppearance: "system", // system, light, dark
         defaultColor:
             "systemBlue", // systemBlue, systemPurple, systemPink, systemRed, systemOrange, systemYellow, systemGreen, systemGray
-      ));
+        child: MainWidget(title: '',),
+  ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

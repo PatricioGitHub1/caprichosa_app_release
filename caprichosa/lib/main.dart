@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_cupertino_desktop_kit/cdk_app.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app_data.dart';
@@ -23,12 +24,12 @@ void main() async {
     // Wrap your MyApp with Provider
     ChangeNotifierProvider(
       create: (context) => appData,
-      child: const MyApp(
-        defaultAppearance: "light", // system, light, dark
+      child: const CDKApp(
+        defaultAppearance: "system", // system, light, dark
         defaultColor:
             "systemBlue", // systemBlue, systemPurple, systemPink, systemRed, systemOrange, systemYellow, systemGreen, systemGray
-      ),
-  ));
+        child: MainWidget(title: '',),
+  )));
 }
 
 void showWindow(_) async {
@@ -38,14 +39,3 @@ void showWindow(_) async {
   await windowManager.setTitle('Caprichosa');
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required String defaultAppearance, required String defaultColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return const CupertinoApp(
-      home: MainWidget(title: '',),
-    );
-
-  }
-}

@@ -79,20 +79,17 @@ class _MainWidgetState extends State<MainWidget> {
                     ),
                   )
                 : Container(
-                    color: CupertinoColors.destructiveRed,
+                    //color: CupertinoColors.destructiveRed,
                     child: Row(
                       children: [
                         Expanded(
                           flex: 4,
-                          child: Container(
-                            color: CupertinoColors.activeGreen,
-                            child: CollectionEdit(collection: appData.selectedCollection),
-                          ),
+                          child: CollectionEdit(collection: appData.selectedCollection),
                         ),
                         Expanded(
                           flex: 6,
                           child: Container(
-                            color: CupertinoColors.systemBlue,
+                            //color: CupertinoColors.systemBlue,
                             // Your content for the second container here
                           ),
                         ),

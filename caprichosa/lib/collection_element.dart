@@ -4,7 +4,7 @@ class CollectionElement {
   String name;
   String? imageBase64;
   double percentage;
-  Color? color;
+  Color color;
 
   CollectionElement(this.name, this.imageBase64, this.percentage, this.color);
 }
