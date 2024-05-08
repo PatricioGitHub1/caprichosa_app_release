@@ -6,5 +6,12 @@ class CollectionElement {
   double percentage;
   Color color;
 
-  CollectionElement(this.name, this.imageBase64, this.percentage, this.color);
+  CollectionElement(this.name, this.imageBase64, this.percentage, this.color) {
+    percentage = double.parse(percentage.toStringAsFixed(2));
+  }
+
+  @override
+  String toString() {
+    return "($name,$percentage)";
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:caprichosa/app_data.dart';
 import 'package:caprichosa/collection.dart';
 import 'package:caprichosa/collection_edit.dart';
+import 'package:caprichosa/collection_statistics.dart';
 import 'package:caprichosa/left_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -88,15 +89,13 @@ class _MainWidgetState extends State<MainWidget> {
                         ),
                         Expanded(
                           flex: 6,
-                          child: Container(
-                            //color: CupertinoColors.systemBlue,
-                            // Your content for the second container here
-                          ),
+                          child: CollectionStatistics(),
                         ),
                       ],
                     ),
                   ),
           ),
+          
         ],
       ),
     );

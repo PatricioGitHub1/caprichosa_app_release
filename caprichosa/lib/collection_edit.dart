@@ -195,9 +195,8 @@ class _CollectionEditState extends State<CollectionEdit> {
                                   decimals: 2,
                                   units: "%",
                                   onValueChanged: (double value) {
-                                    setState(() {
                                       appData.setCollectionElementPercentage(appData.selectedElement!, value);
-                                    });
+                                    
                                   },
                                 ))
                             ),
@@ -230,7 +229,10 @@ class _CollectionEditState extends State<CollectionEdit> {
                                 child: CDKButton(
                                   style: CDKButtonStyle.action,
                                   isLarge: true,
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    print("subir imagen xd");
+                                    
+                                  },
                                   child: const Text('Upload image'),
                                 )),
                             ),

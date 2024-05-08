@@ -36,6 +36,6 @@ void showWindow(_) async {
   const size = Size(1200.0, 800.0);
   windowManager.setSize(size);
   windowManager.setMinimumSize(size);
-  await windowManager.setTitle('Caprichosa');
+  await windowManager.setTitle('Kouun');
 }
 
