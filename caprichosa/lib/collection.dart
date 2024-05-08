@@ -14,6 +14,7 @@ class Collection {
   String? lastModificationDate;
   String? filePath;
   List<CollectionElement> elements = [];
+  CollectionElement? selectedElement;
   CollectionAddedPercentage addedPercentage = CollectionAddedPercentage.undefined;
   double differentialPercentage = 0.0;
 

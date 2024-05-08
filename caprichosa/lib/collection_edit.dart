@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:caprichosa/app_data.dart';
 import 'package:caprichosa/collection.dart';
 import 'package:caprichosa/collection_element.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_desktop_kit/cdk_button.dart';
@@ -229,8 +231,13 @@ class _CollectionEditState extends State<CollectionEdit> {
                                 child: CDKButton(
                                   style: CDKButtonStyle.action,
                                   isLarge: true,
-                                  onPressed: () {
-                                    print("subir imagen xd");
+                                  onPressed: () async {
+                                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowedExtensions: ['jpg', 'png'],);
+
+                                    if (result != null) {
+                                      File file = File(result.files.single.path!);
+                                      print(file.path);
+                                    } 
                                     
                                   },
                                   child: const Text('Upload image'),
