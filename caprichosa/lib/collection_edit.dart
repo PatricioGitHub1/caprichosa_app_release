@@ -111,7 +111,7 @@ class _CollectionEditState extends State<CollectionEdit> {
             child: Stack(
               children: [
                 // Content to show when the boolean is true
-                if (appData.selectedElement != null)
+                if (appData.selectedCollection!.selectedElement != null)
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -127,7 +127,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust padding as needed
                                     child: Text(
-                                      appData.selectedElement!.name,
+                                      appData.selectedCollection!.selectedElement!.name,
                                       style: const TextStyle(
                                         color: CupertinoColors.activeBlue,
                                         fontSize: 20,
@@ -190,14 +190,14 @@ class _CollectionEditState extends State<CollectionEdit> {
                               child: SizedBox(
                                 width: 150,
                                 child: CDKFieldNumericSlider(
-                                  value: appData.selectedElement!.percentage,
+                                  value: appData.selectedCollection!.selectedElement!.percentage,
                                   min: 0,
                                   max: 100,
                                   increment: 0.01,
                                   decimals: 2,
                                   units: "%",
                                   onValueChanged: (double value) {
-                                      appData.setCollectionElementPercentage(appData.selectedElement!, value);
+                                      appData.setCollectionElementPercentage(appData.selectedCollection!.selectedElement!, value);
                                     
                                   },
                                 ))
@@ -216,7 +216,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                                         builder: (context, value, child) {
                                           return CDKButtonColor(
                                               key: _anchorColorButton,
-                                              color: appData.selectedElement!.color,
+                                              color: appData.selectedCollection!.selectedElement!.color,
                                               onPressed: () {
                                                 _showPopoverColor(context, _anchorColorButton);
                                               });
@@ -232,13 +232,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                                   style: CDKButtonStyle.action,
                                   isLarge: true,
                                   onPressed: () async {
-                                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowedExtensions: ['jpg', 'png'],);
-
-                                    if (result != null) {
-                                      File file = File(result.files.single.path!);
-                                      print(file.path);
-                                    } 
-                                    
+                                    appData.pickElementImage(appData.selectedCollection!.selectedElement!);
                                   },
                                   child: const Text('Upload image'),
                                 )),
@@ -250,16 +244,16 @@ class _CollectionEditState extends State<CollectionEdit> {
                 child: Container(
                   // Add color or decoration as needed
                   child: Center(
-                    child: appData.selectedElement?.imageBase64 != null
+                    child: appData.selectedCollection?.selectedElement?.imageBase64 != null
                       ? FractionallySizedBox(
                           widthFactor: 1.0,
                           heightFactor: 1.0,
                           child: Image.memory(
-                            base64.decode(appData.selectedElement!.imageBase64!),
+                            base64.decode(appData.selectedCollection!.selectedElement!.imageBase64!),
                             fit: BoxFit.contain,
                           ),
                         )
-                      : Center(
+                      : const Center(
                           child: Text(
                             'No image selected',
                             style: TextStyle(
@@ -278,7 +272,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                     ],
                   ),
                 // Content to show when the boolean is false
-                if (appData.selectedElement == null)
+                if (appData.selectedCollection?.selectedElement == null)
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center, // Center the children horizontally
@@ -337,7 +331,7 @@ class _CollectionEditState extends State<CollectionEdit> {
                   decoration: BoxDecoration(
                     border: Border(
                       left: BorderSide(
-                        color: appData.selectedElement == appData.selectedCollection!.elements[index]
+                        color: appData.selectedCollection?.selectedElement == appData.selectedCollection!.elements[index]
                             ? CupertinoColors.activeBlue
                             : Colors.transparent,
                         width: 4, // Adjust the width of the border as needed
@@ -443,7 +437,7 @@ class _CollectionEditState extends State<CollectionEdit> {
           return CDKPickerColor(
             color: value,
             onChanged: (color) {
-              appData.setCollectionElementColor(appData.selectedElement!, color);
+              appData.setCollectionElementColor(appData.selectedCollection!.selectedElement!, color);
             },
           );
         },

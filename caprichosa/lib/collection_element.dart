@@ -14,4 +14,22 @@ class CollectionElement {
   String toString() {
     return "($name,$percentage)";
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'imageBase64': imageBase64,
+      'percentage': percentage,
+      'color': color.value,
+    };
+  }
+
+  factory CollectionElement.fromJson(Map<String, dynamic> json) {
+    return CollectionElement(
+      json['name'],
+      json['imageBase64'],
+      json['percentage'].toDouble(),
+      Color(json['color']),
+    );
+  }
 }

@@ -31,13 +31,16 @@ class _MainWidgetState extends State<MainWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Tooltip(
-              message: 'Save current collection',
+              message: 'Export current collection',
               child: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  print('hello');
+                  if (appData.selectedCollection != null) {
+                    appData.exportCollection(appData.selectedCollection!);
+                  }
+                  
                 },
-                child: const Icon(CupertinoIcons.arrow_down_doc_fill),
+                child: const Icon(CupertinoIcons.arrow_up_doc_fill),
               ),
             ),
             Tooltip(
@@ -45,9 +48,9 @@ class _MainWidgetState extends State<MainWidget> {
               child: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  print('world');
+                  appData.importCollection();
                 },
-                child: const Icon(CupertinoIcons.arrow_up_doc_fill),
+                child: const Icon(CupertinoIcons.arrow_down_doc_fill),
               ),
             ),
             Tooltip(

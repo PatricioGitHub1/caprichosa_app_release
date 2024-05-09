@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:caprichosa/app_data.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,10 +26,50 @@ class _SpinLayout extends State<SpinLayout> {
 
     Timer(Duration(seconds: 4), () {
       print("The spin has ended");
-      Navigator.pop(context);
+      _showAlertDialog(context);
+      //Navigator.pop(context);
+
     });
   }
+
+  void goBack(BuildContext context) {
+    Navigator.pop(context);
+  }
   
+  void _showAlertDialog(BuildContext context) {
+    showCupertinoModalPopup<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(appData.rouletteComponents[appData.totalRouletteComponents - 10].name),
+        content: Column(children: [
+          appData.rouletteComponents[appData.totalRouletteComponents - 10].imageBase64 != null
+            ? Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.height * 0.5,
+              child: FractionallySizedBox(
+              widthFactor: 1.0,
+              heightFactor: 1.0,
+              child: Image.memory(
+                base64.decode(appData.rouletteComponents[appData.totalRouletteComponents - 10].imageBase64!),
+                fit: BoxFit.contain,
+              ),
+          )) : Container()
+        ],),
+        //const Text('Proceed with destructive action?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              goBack(context);
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _scrollToCenterItem(int index) {
     double itemExtent = MediaQuery.of(context).size.height * 0.40 + 8; // Item height + margin

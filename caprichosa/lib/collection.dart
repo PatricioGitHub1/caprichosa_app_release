@@ -78,7 +78,30 @@ class Collection {
 
   void orderElementsByPercentage() {
     elements.sort((a, b) => a.percentage.compareTo(b.percentage));
-    print(elements.toString());
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'lastModificationDate': lastModificationDate,
+      'filePath': filePath,
+      'elements': elements.map((element) => element.toJson()).toList(),
+      'selectedElement': selectedElement?.toJson(),
+      'addedPercentage': addedPercentage.toString().split('.').last,
+      'differentialPercentage': differentialPercentage,
+    };
+  }
+
+  factory Collection.fromJson(Map<String, dynamic> json) {
+    return Collection(
+      json['name'],
+      json['lastModificationDate'],
+      (json['elements'] as List).map((elementJson) => CollectionElement.fromJson(elementJson)).toList(),
+      json['filePath'],
+    )
+      ..selectedElement = json['selectedElement'] != null ? CollectionElement.fromJson(json['selectedElement']) : null
+      ..addedPercentage = CollectionAddedPercentage.values.firstWhere((e) => e.toString().split('.').last == json['addedPercentage'])
+      ..differentialPercentage = json['differentialPercentage'] ?? 0.0;
   }
   
 }
