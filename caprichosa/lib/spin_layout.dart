@@ -46,7 +46,7 @@ class _SpinLayout extends State<SpinLayout> {
           appData.rouletteComponents[appData.totalRouletteComponents - 10].imageBase64 != null
             ? Container(
               height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width * 0.5,
               child: FractionallySizedBox(
               widthFactor: 1.0,
               heightFactor: 1.0,

@@ -100,6 +100,20 @@ class _CollectionEditState extends State<CollectionEdit> {
                   controller: _textFieldController,
                   placeholder: widget.collection?.name,
                 ),
+               
+               Tooltip(
+                message: "Save Collection's name",
+                child:CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  appData.setCollectionName(widget.collection!, _textFieldController.text);
+                  
+                },
+                child: const Icon(CupertinoIcons.floppy_disk),
+              ), 
+               )
+               
+
               ],
             ),
           ),
@@ -165,6 +179,8 @@ class _CollectionEditState extends State<CollectionEdit> {
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
                                     print('elemento guardado!!');
+                                    widget.collection!.selectedElement!.name = _textFieldControllerElementName.text;
+                                    appData.notifyListeners();
                                   },
                                   child: const Icon(CupertinoIcons.floppy_disk),
                                 ),
@@ -179,7 +195,9 @@ class _CollectionEditState extends State<CollectionEdit> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: CupertinoTextField(
                           controller: _textFieldControllerElementName,
+                          placeholder: widget.collection!.selectedElement!.name,
                         )
+
                       ),
                       const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                       Row(

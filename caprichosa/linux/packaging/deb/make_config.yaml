@@ -1,0 +1,34 @@
+display_name: Kouun
+package_name: kouun
+
+maintainer:
+  name: Patricio Rojas
+  email: projascondori.cf@iesesteveterradas.com
+
+priority: optional
+
+section: x11
+
+installed_size: 25000
+
+dependencies:
+  - mpv
+
+essential: false
+
+icon: linux/assets/maneki_neko.png
+
+postuninstall_scripts:
+  - echo "Until next time!!"
+
+keywords:
+  - Roulette
+  - Random
+
+generic_name: Randomness
+
+categories:
+  - Development
+  - fun
+
+startup_notify: true

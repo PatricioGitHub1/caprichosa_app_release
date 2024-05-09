@@ -56,6 +56,11 @@ class AppData with ChangeNotifier {
     }
   }
 
+  void setCollectionName(Collection collection, String name) {
+    collection.name = name;
+    notifyListeners();
+  }
+
   // Method to close collection
   void closeCollection(Collection collection) {
     if (collection == selectedCollection) {
